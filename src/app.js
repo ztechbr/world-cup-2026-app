@@ -8,7 +8,7 @@ import { MatchSimulator, generateEventsForFinishedMatch } from './simulator.js';
 let matchesState = [];
 let standingsState = {};
 let favoritesState = new Set();
-let currentPage = 0; // 0: Países, 1: Grupos, 2: Jogos do Dia
+let currentPage = 2; // 0: Países, 1: Grupos, 2: Jogos do Dia
 let selectedMatchId = null;
 
 let countrySearchQuery = '';
@@ -88,16 +88,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Renderiza Views Iniciais
   renderAll();
 
-  // Comportamento inicial específico para o Modo Embed
-  if (isEmbed) {
-    // Inicia na aba Jogos do Dia (Aba 2 do carrossel)
-    navigateToPage(2);
-    
-    // Abre automaticamente os detalhes se houver alguma partida ocorrendo no momento (live)
-    const liveMatch = matchesState.find(m => m.status === 'live');
-    if (liveMatch) {
-      openMatchDetail(liveMatch.id);
-    }
+  // Inicia sempre na aba Jogos do Dia (Aba 2 do carrossel) para todas as inicializações
+  navigateToPage(2);
+  
+  // Abre automaticamente os detalhes se houver alguma partida ocorrendo no momento (live)
+  const liveMatch = matchesState.find(m => m.status === 'live');
+  if (liveMatch) {
+    openMatchDetail(liveMatch.id);
   }
 
   // Se estiver no modo embed, ativa o pull da API minuto a minuto (60s)
