@@ -65,6 +65,7 @@ const DOM = {
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', async () => {
   initClock();
+  initAutoScaling();
   initSwipeGestures();
   loadFavorites();
   
@@ -139,6 +140,27 @@ function initClock() {
   
   updateTime();
   setInterval(updateTime, 30000);
+}
+
+// Ajusta a escala do relógio para caber no viewport sem cortar (responsabilidade total)
+function initAutoScaling() {
+  const adjustScale = () => {
+    // Dimensões originais de referência do relógio (incluindo bezel e pulseiras com margem de segurança)
+    const originalWidth = 440;  // watch-size (380) + bezel padding (40) + respiros (20)
+    const originalHeight = 580; // watch-size (380) + bezel padding (40) + straps (160)
+    
+    // Calcula fatores de escala horizontais e verticais
+    const scaleX = window.innerWidth / originalWidth;
+    const scaleY = window.innerHeight / originalHeight;
+    
+    // O fator de escala final será o menor dos dois, limitado a no máximo 1 (não amplia além do tamanho original)
+    const scale = Math.min(1, scaleX, scaleY);
+    
+    document.documentElement.style.setProperty('--watch-scale', scale);
+  };
+  
+  adjustScale();
+  window.addEventListener('resize', adjustScale);
 }
 
 // Configura o motor de simulação
