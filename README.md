@@ -46,11 +46,11 @@ Certifique-se de ter o Docker e o Docker Compose instalados em sua máquina.
 1. **Inicie o ambiente:**
    No diretório raiz do projeto, execute o comando:
    ```bash
-   docker-compose up --build
+   docker-compose -f docker-compose.yml -f docker-compose.local.yml up --build
    ```
    Isso construirá e iniciará ambos os contêineres:
    * **Simulador Smartwatch (Frontend Vite/Nginx):** Disponível em [http://localhost:3000](http://localhost:3000). O subcaminho das estatísticas estará ativo em [http://localhost:3000/stats/](http://localhost:3000/stats/).
-   * **Dashboard de Estatísticas (Python Streamlit):** Disponível internamente em [http://localhost:90](http://localhost:90).
+   * **Dashboard de Estatísticas (Python Streamlit):** Disponível em [http://localhost:90](http://localhost:90).
 
 ---
 

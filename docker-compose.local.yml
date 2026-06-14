@@ -1,0 +1,8 @@
+services:
+  worldcup-simulator:
+    ports:
+      - "3000:80"
+
+  worldcup-stats:
+    ports:
+      - "90:90"
