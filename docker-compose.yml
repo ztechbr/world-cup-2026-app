@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
+    depends_on:
+      - worldcup-stats
     logging:
       driver: "json-file"
       options:

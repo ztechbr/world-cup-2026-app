@@ -5,7 +5,7 @@ WORKDIR /app
 # Instala dependências necessárias do Python
 RUN pip install --no-cache-dir streamlit pandas requests
 
-# Copia os arquivos do simulador necessários para rodar as estatísticas
+# Copia todos os arquivos necessários
 COPY stats_app.py .
 COPY .streamlit/ .streamlit/
 COPY src/fallback-matches.js src/fallback-matches.js
@@ -13,4 +13,11 @@ COPY public/translate.xml public/translate.xml
 
 EXPOSE 90
 
-CMD ["streamlit", "run", "stats_app.py"]
+# Passa parâmetros explicitamente para garantir porta e baseUrlPath corretos
+CMD ["streamlit", "run", "stats_app.py", \
+     "--server.port=90", \
+     "--server.address=0.0.0.0", \
+     "--server.enableCORS=false", \
+     "--server.enableXsrfProtection=false", \
+     "--server.baseUrlPath=stats", \
+     "--server.headless=true"]
