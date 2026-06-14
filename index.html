@@ -138,6 +138,13 @@
       </div>
       
       <div class="watch-strap-bottom"></div>
+      
+      <!-- Botão Statistics -->
+      <div class="watch-extra-controls" style="margin-top: 15px; width: 100%; display: flex; justify-content: center; z-index: 5;">
+        <button class="btn" id="btn-statistics" data-translate="statistics_btn" style="width: 100%; max-width: 280px; background-color: var(--color-border); color: #fff; border: 1px solid var(--color-border); height: 44px; font-size: 0.9rem;">
+          📊 Statistics
+        </button>
+      </div>
     </div>
     
     <!-- ==========================================================================
@@ -211,6 +218,15 @@
       </div>
     </div>
     
+  </div> <!-- Fim App Container -->
+
+  <!-- Modal de Estatísticas (Streamlit Iframe) -->
+  <div class="stats-modal-overlay" id="stats-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+    <div class="stats-modal-content" style="background: #09090b; border: 1px solid var(--color-border); border-radius: 24px; padding: 24px; width: 90%; max-width: 1000px; height: 85%; position: relative; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+      <button id="stats-close-btn" style="position: absolute; right: 20px; top: 20px; background: none; border: none; color: #fff; font-size: 1.8rem; cursor: pointer; transition: transform 0.2s ease; z-index: 10001;">✕</button>
+      <h2 style="margin: 0; color: #00ff87; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">📊 <span data-translate="statistics_title">Estatísticas do Torneio</span></h2>
+      <iframe id="stats-iframe" src="" style="width: 100%; height: 100%; border: none; border-radius: 14px; background: #09090b;"></iframe>
+    </div>
   </div>
 
   <script type="module" src="./src/app.js"></script>

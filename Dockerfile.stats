@@ -1,0 +1,16 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Instala dependências necessárias do Python
+RUN pip install --no-cache-dir streamlit pandas requests
+
+# Copia os arquivos do simulador necessários para rodar as estatísticas
+COPY stats_app.py .
+COPY .streamlit/ .streamlit/
+COPY src/fallback-matches.js src/fallback-matches.js
+COPY public/translate.xml public/translate.xml
+
+EXPOSE 90
+
+CMD ["streamlit", "run", "stats_app.py"]

@@ -14,3 +14,17 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  worldcup-stats:
+    container_name: worldcup_2026_stats
+    build:
+      context: .
+      dockerfile: Dockerfile.stats
+    ports:
+      - "90:90"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

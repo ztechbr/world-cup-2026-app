@@ -61,7 +61,13 @@ const DOM = {
   apiStatusDot: document.getElementById('api-status-dot'),
   apiStatusText: document.getElementById('api-status-text'),
   btnForceSync: document.getElementById('btn-force-sync'),
-  simDate: document.getElementById('sim-date')
+  simDate: document.getElementById('sim-date'),
+  
+  // Estatísticas Modal
+  btnStatistics: document.getElementById('btn-statistics'),
+  statsModal: document.getElementById('stats-modal'),
+  statsCloseBtn: document.getElementById('stats-close-btn'),
+  statsIframe: document.getElementById('stats-iframe')
 };
 
 // ==========================================================================
@@ -477,6 +483,47 @@ function setupUIEventListeners() {
         await syncData(true);
         initSimulator();
         renderAll();
+      }
+    });
+  }
+  
+  // Controle de Estatísticas (Streamlit)
+  if (DOM.btnStatistics) {
+    DOM.btnStatistics.addEventListener('click', () => {
+      const protocol = window.location.protocol;
+      const hostname = window.location.hostname;
+      const iframeUrl = (hostname === 'localhost' || hostname === '127.0.0.1')
+        ? `http://${hostname}:90/?language=${activeLang}`
+        : `${protocol}//${hostname}:90/?language=${activeLang}`;
+      
+      console.log('Opening statistics dashboard at:', iframeUrl);
+      if (DOM.statsIframe) {
+        DOM.statsIframe.src = iframeUrl;
+      }
+      if (DOM.statsModal) {
+        DOM.statsModal.style.display = 'flex';
+      }
+    });
+  }
+  
+  if (DOM.statsCloseBtn) {
+    DOM.statsCloseBtn.addEventListener('click', () => {
+      if (DOM.statsModal) {
+        DOM.statsModal.style.display = 'none';
+      }
+      if (DOM.statsIframe) {
+        DOM.statsIframe.src = '';
+      }
+    });
+  }
+  
+  if (DOM.statsModal) {
+    DOM.statsModal.addEventListener('click', (e) => {
+      if (e.target === DOM.statsModal) {
+        DOM.statsModal.style.display = 'none';
+        if (DOM.statsIframe) {
+          DOM.statsIframe.src = '';
+        }
       }
     });
   }

@@ -8,6 +8,20 @@
     <es>Países</es>
     <fr>Pays</fr>
   </key>
+  <key name="statistics_btn">
+    <pt>📊 Estatísticas</pt>
+    <en>📊 Statistics</en>
+    <it>📊 Statistiche</it>
+    <es>📊 Estadísticas</es>
+    <fr>📊 Statistiques</fr>
+  </key>
+  <key name="statistics_title">
+    <pt>Estatísticas do Torneio</pt>
+    <en>Tournament Statistics</en>
+    <it>Statistiche del Torneo</it>
+    <es>Estadísticas del Torneo</es>
+    <fr>Statistiques du Tournoi</fr>
+  </key>
   <key name="search_placeholder">
     <pt>Buscar país...</pt>
     <en>Search country...</en>

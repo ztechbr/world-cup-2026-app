@@ -1,0 +1,12 @@
+[server]
+port = 90
+address = "0.0.0.0"
+enableCORS = false
+enableXsrfProtection = false
+
+[theme]
+primaryColor = "#00ff87"
+backgroundColor = "#09090b"
+secondaryBackgroundColor = "#141416"
+textColor = "#ffffff"
+font = "sans serif"
