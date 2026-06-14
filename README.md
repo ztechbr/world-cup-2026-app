@@ -6,7 +6,36 @@ A interface exibe um relógio interativo (com suporte a swipe lateral para naveg
 
 ---
 
-## 🚀 Como Executar o Projeto
+## 🔌 Arquitetura de Proxy Reverso (Como tudo se conecta)
+
+Para evitar conflitos de portas, simplificar o suporte a HTTPS/SSL e contornar erros de **Mixed Content** (conteúdo misto HTTP/HTTPS) nos navegadores, o projeto utiliza uma arquitetura de proxy reverso unificada sob o domínio principal:
+
+```text
+                  [ Usuário / Navegador ]
+                             │
+                             ▼ (HTTPS / Porta 443)
+                 [ Easypanel Router (Traefik) ]
+                             │
+                             ▼ (HTTP / Porta 80)
+            ┌───────────────────────────────────┐
+            │   worldcup-simulator (Nginx)      │
+            │                                   │
+            ├───────────────┬───────────────────┤
+            │ Caminho: /    │ Caminho: /stats/  │
+            └───────┬───────┴─────────┬─────────┘
+                    │                 │
+                    ▼ (Estático)      ▼ (Proxy Reverso Interno)
+              [ Smartwatch ]    [ worldcup-stats (Porta 90) ]
+```
+
+* **Nginx (Porta 80) como Porta de Entrada:** O Nginx gerencia todo o tráfego público.
+  * Chamadas à raiz (`/`) ou arquivos de código (HTML/JS/CSS) são entregues diretamente como conteúdo estático.
+  * Chamadas para o subcaminho `/stats/` são interceptadas e repassadas internamente pelo Docker para o contêiner do Python Streamlit na porta `90`.
+* **Fim do Conflito de Portas:** O Easypanel só precisa expor a porta `80` do simulador. Toda a comunicação com o Streamlit ocorre na rede interna do Docker.
+
+---
+
+## 🚀 Como Executar o Projeto Localmente
 
 Você pode rodar o ecossistema completo do projeto localmente de duas maneiras: utilizando Docker Compose (Recomendado) ou executando os serviços manualmente.
 
@@ -20,46 +49,76 @@ Certifique-se de ter o Docker e o Docker Compose instalados em sua máquina.
    docker-compose up --build
    ```
    Isso construirá e iniciará ambos os contêineres:
-   * **Simulador Smartwatch (Frontend Vite):** Disponível em [http://localhost:3000](http://localhost:3000).
-   * **Dashboard de Estatísticas (Python Streamlit):** Disponível em [http://localhost:90](http://localhost:90).
+   * **Simulador Smartwatch (Frontend Vite/Nginx):** Disponível em [http://localhost:3000](http://localhost:3000). O subcaminho das estatísticas estará ativo em [http://localhost:3000/stats/](http://localhost:3000/stats/).
+   * **Dashboard de Estatísticas (Python Streamlit):** Disponível internamente em [http://localhost:90](http://localhost:90).
 
 ---
 
 ### Opção 2: Execução Manual
 
 #### Serviço 1: Simulador Smartwatch (Vite + Javascript)
-1. Certifique-se de ter o **Node.js** instalado.
-2. Navegue até a pasta do projeto e instale as dependências:
+1. Instale as dependências:
    ```bash
    npm install
    ```
-3. Inicie o servidor de desenvolvimento:
+2. Inicie o servidor de desenvolvimento:
    ```bash
    npm run dev
    ```
-4. Acesse no navegador em [http://localhost:3000](http://localhost:3000).
+3. Acesse no navegador em [http://localhost:3000](http://localhost:3000).
 
 #### Serviço 2: Dashboard de Estatísticas (Python Streamlit)
-1. Certifique-se de ter o **Python 3.9+** instalado.
-2. Instale as dependências necessárias listadas em `Dockerfile.stats`:
+1. Instale as dependências necessárias do Python:
    ```bash
    pip install streamlit pandas requests
    ```
-3. Inicie o servidor Streamlit:
+2. Inicie o servidor Streamlit:
    ```bash
    streamlit run stats_app.py
    ```
-4. Acesse no navegador em [http://localhost:90](http://localhost:90).
+3. Acesse no navegador em [http://localhost:90](http://localhost:90).
+
+---
+
+## 🚀 Implantação no Easypanel
+
+Por se tratar de um projeto composto por dois contêineres independentes (Nginx e Streamlit), você deve configurá-los no Easypanel de uma das seguintes maneiras:
+
+### Método A: Criando Dois Serviços Dedicados (Recomendado)
+
+1. **Crie o Serviço do Simulador (Smartwatch):**
+   * Crie um novo **App** no Easypanel (ex: `worldcup2026demo`).
+   * Aponte para o seu repositório Git.
+   * Nas configurações de domínio, aponte o seu domínio público para a porta **80** (Destino: HTTP / Porta: 80).
+   * **Importante:** Não configure nenhuma regra de domínio apontando para a porta 90 neste App para evitar conflito.
+
+2. **Crie o Serviço de Estatísticas (Streamlit):**
+   * No mesmo projeto, clique em `+ Serviço` e selecione um novo **App** (ex: `worldcup-stats`).
+   * Aponte para o **mesmo** repositório Git.
+   * Nas configurações de build do App, mude o **Dockerfile Path** para `Dockerfile.stats`.
+   * Você não precisa associar nenhum domínio público a este App, pois ele será acessado apenas internamente.
+
+3. **Como eles se comunicam:**
+   * A configuração do Nginx no simulador tentará encontrar o Streamlit pelo hostname padrão do contêiner (`worldcup-stats:90`).
+   * Se o seu projeto no Easypanel se chama `ai` e o App do Streamlit se chama `worldcup-stats`, o Nginx tentará se conectar via `http://worldcup-stats:90` e automaticamente usará a regra de fallback para `http://ai_worldcup-stats:90` caso a primeira falhe.
+
+---
+
+### Método B: Utilizando a pilha do Docker Compose do Easypanel
+
+1. No Easypanel, em vez de criar um "App" padrão, adicione um serviço do tipo **Docker Compose**.
+2. Aponte para o repositório Git. O Easypanel detectará o arquivo `docker-compose.yml` e subirá os dois serviços (`worldcup-simulator` e `worldcup-stats`) na mesma rede interna.
+3. Nas configurações do serviço de compose do Easypanel, aponte o domínio público do projeto para o contêiner `worldcup-simulator` na porta `80`.
 
 ---
 
 ## 📊 Dashboard de Estatísticas (Streamlit)
 
-O painel secundário calcula e exibe em tempo real o desempenho do torneio para todas as partidas com status `finished` (finalizadas):
+O painel calcula e exibe em tempo real o desempenho do torneio para todas as partidas com status `finished` (finalizadas):
 * **Métricas Principais:** Contagem de partidas concluídas, total e média de gols por partida, cartões amarelos e vermelhos simulados, e faltas cometidas.
 * **Artilharia (Top Scorers):** Ranking gráfico dinâmico dos jogadores que marcaram gols no torneio.
 * **Desempenho de Confrontos:** Gráfico comparativo de vitórias de mandantes, empates e vitórias de visitantes.
-* **Ataques Eficientes:** Tabela interativa com os times que mais marcaram gols.
+* **Ataques Eficientes:** Tabela interativa com os times que mais marcaram gols (mapeados e traduzidos).
 * **Últimas Partidas:** Relatório com os placares das últimas partidas finalizadas.
 
 ---
@@ -88,15 +147,13 @@ O painel de estatísticas foi configurado no arquivo `.streamlit/config.toml` de
 ```html
 <!-- Incorpora o painel de estatísticas com idioma em português -->
 <iframe 
-  src="http://localhost:90/?language=pt" 
+  src="https://ai-worldcup2026demo.jd0rwz.easypanel.host/stats/?language=pt" 
   width="100%" 
   height="750px" 
   style="border: none; border-radius: 16px; background: #09090b; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"
   allow="fullscreen">
 </iframe>
 ```
-
-> 💡 **Dica de Produção:** Em ambientes de produção hospedados em HTTPS (como o Easypanel), configure um subdomínio seguro (ex: `https://stats.seudominio.com`) para apontar para o contêiner Streamlit na porta `90`. Isso evita problemas de bloqueio de **Mixed Content** (conteúdo misto HTTP dentro de HTTPS) nos navegadores dos usuários.
 
 ---
 
@@ -111,12 +168,12 @@ O painel de estatísticas foi configurado no arquivo `.streamlit/config.toml` de
 ├── package.json            # Scripts e dependências de desenvolvimento (Vite)
 ├── stats_app.py            # Dashboard de estatísticas em Python Streamlit
 ├── .streamlit
-│   └── config.toml         # Configuração de portas, tema escuro e bypass de CORS/XSRF no Streamlit
+│   └── config.toml         # Configuração de portas, subpath (/stats/), tema escuro e bypass de CORS no Streamlit
 ├── public
 │   └── translate.xml       # Dicionário XML central de traduções (PT, EN, IT, ES, FR)
 └── src
-    ├── styles.css          # Estilos premium, glassmorphism, frame do smartwatch e animações
-    ├── app.js              # Controlador principal (eventos, carregamento dinâmico de iframe e reatividade)
+    ├── styles.css          # Estilos premium, glassmorphism, frame do smartwatch e painel
+    ├── app.js              # Controlador principal (eventos, iframe relativo e reatividade)
     ├── api.js              # Cliente da API com estratégias híbridas de caching e fallback
     ├── simulator.js        # Motor de simulação de jogo ao vivo e gerador de eventos retroativos
     ├── utils.js            # Utilitários (traduções de times, emojis de bandeira e standings)
