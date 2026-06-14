@@ -1,8 +1,5 @@
-version: '3.8'
-
 services:
   worldcup-simulator:
-    container_name: worldcup_2026_simulator
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,7 +13,6 @@ services:
         max-file: "3"
 
   worldcup-stats:
-    container_name: worldcup_2026_stats
     build:
       context: .
       dockerfile: Dockerfile.stats
