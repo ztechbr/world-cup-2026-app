@@ -633,6 +633,17 @@ with tab_calendar:
                         svh, sva = stats['saves']
                         xgh, xga = stats['xg']
 
+                        # Pre-compute scorer HTML to avoid backslash-in-f-string (Python 3.10)
+                        no_goals_html = '<div style="color:#52525b; font-size:0.8rem;">' + t('no_goals_text') + '</div>'
+                        home_scorers_html = ''.join(
+                            '<div class="scorer-item">⚽ ' + p + ' <span style="color:#52525b;">' + str(mi) + "'</span></div>"
+                            for p, mi in home_sc
+                        ) if home_sc else no_goals_html
+                        away_scorers_html = ''.join(
+                            '<div class="scorer-item">⚽ ' + p + ' <span style="color:#52525b;">' + str(mi) + "'</span></div>"
+                            for p, mi in away_sc
+                        ) if away_sc else no_goals_html
+
                         def stat_row_html(val_h, val_a, label, color="#00ff87", is_pct=False, invert=False):
                             max_v = max(val_h, val_a, 1)
                             w_h = int((val_h / max_v) * 100) if not invert else int((1 - val_h / max(val_h + val_a, 1)) * 100)
@@ -647,6 +658,9 @@ with tab_calendar:
                                 <div class="progress-container" style="transform:scaleX(-1);"><div class="progress-fill" style="width:{w_a}%; background:linear-gradient(90deg,{color},{color}99);"></div></div>
                                 <div style="font-weight:700; color:#fff; min-width:44px; text-align:right;">{display_a}</div>
                             </div>"""
+
+                        scorers_label_home = t('scorers_match') + ' — ' + hf + ' ' + home
+                        scorers_label_away = t('scorers_match') + ' — ' + af + ' ' + away
 
                         st.markdown(f"""
                         <div class="detail-card">
@@ -665,12 +679,12 @@ with tab_calendar:
 
                             <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;">
                                 <div>
-                                    <div style="color:#71717a; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">⚽ {t('scorers_match')} — {hf} {home}</div>
-                                    {''.join(f'<div class="scorer-item">⚽ {p} <span style="color:#52525b;">{mi}\'</span></div>' for p,mi in home_sc) if home_sc else f'<div style="color:#52525b; font-size:0.8rem;">{t("no_goals_text")}</div>'}
+                                    <div style="color:#71717a; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">⚽ {scorers_label_home}</div>
+                                    {home_scorers_html}
                                 </div>
                                 <div>
-                                    <div style="color:#71717a; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">⚽ {t('scorers_match')} — {af} {away}</div>
-                                    {''.join(f'<div class="scorer-item">⚽ {p} <span style="color:#52525b;">{mi}\'</span></div>' for p,mi in away_sc) if away_sc else f'<div style="color:#52525b; font-size:0.8rem;">{t("no_goals_text")}</div>'}
+                                    <div style="color:#71717a; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">⚽ {scorers_label_away}</div>
+                                    {away_scorers_html}
                                 </div>
                             </div>
 
