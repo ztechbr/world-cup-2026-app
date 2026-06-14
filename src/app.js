@@ -490,11 +490,7 @@ function setupUIEventListeners() {
   // Controle de Estatísticas (Streamlit)
   if (DOM.btnStatistics) {
     DOM.btnStatistics.addEventListener('click', () => {
-      const protocol = window.location.protocol;
-      const hostname = window.location.hostname;
-      const iframeUrl = (hostname === 'localhost' || hostname === '127.0.0.1')
-        ? `http://${hostname}:90/?language=${activeLang}`
-        : `${protocol}//${hostname}:90/?language=${activeLang}`;
+      const iframeUrl = `./stats/?language=${activeLang}`;
       
       console.log('Opening statistics dashboard at:', iframeUrl);
       if (DOM.statsIframe) {

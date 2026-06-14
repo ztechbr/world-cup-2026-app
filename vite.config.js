@@ -11,6 +11,11 @@ export default defineConfig({
         headers: {
           'X-Token': 'COPA26!'
         }
+      },
+      '/stats': {
+        target: 'http://localhost:90',
+        changeOrigin: true,
+        ws: true
       }
     }
   }
