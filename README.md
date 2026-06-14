@@ -1,86 +1,124 @@
-# Smartwatch Copa do Mundo 2026 - Simulador de Partidas
+# Smartwatch Copa do Mundo 2026 - Simulador & Estatísticas
 
-Esta é uma aplicação web de alta fidelidade que simula um aplicativo de relógio inteligente circular para consulta e simulação de partidas da Copa do Mundo de 2026, com base no layout fornecido e na API oficial do torneio.
+Esta é uma aplicação web de alta fidelidade que simula um aplicativo de relógio inteligente circular para consulta e simulação de partidas da Copa do Mundo de 2026, integrada a um **Dashboard de Estatísticas** dinâmico desenvolvido em Python Streamlit.
 
-A interface exibe um relógio interativo (com suporte a swipe lateral para navegação e botão coroa funcional) e um painel de controle lateral translúcido (glassmorphism) para controlar a simulação das partidas em tempo real.
+A interface exibe um relógio interativo (com suporte a swipe lateral para navegação e botão coroa funcional), um painel de controle lateral translúcido (glassmorphism) para simulação de jogos ao vivo, e um botão **Statistics** para abrir o dashboard analítico em um iframe/modal responsivo.
 
 ---
 
 ## 🚀 Como Executar o Projeto
 
-### Pré-requisitos
-- Node.js instalado (versão 18 ou superior recomendada).
+Você pode rodar o ecossistema completo do projeto localmente de duas maneiras: utilizando Docker Compose (Recomendado) ou executando os serviços manualmente.
 
-### Passo a Passo
+### Opção 1: Via Docker Compose (Rápido & Isolado)
 
-1. **Defina o Workspace:**
-   No seu editor de código, abra a pasta deste projeto:
-   `/Users/rodrigozaroni/.gemini/antigravity/scratch/world-cup-2026-app`
+Certifique-se de ter o Docker e o Docker Compose instalados em sua máquina.
 
-2. **Instale as dependências:**
-   No terminal, execute:
+1. **Inicie o ambiente:**
+   No diretório raiz do projeto, execute o comando:
+   ```bash
+   docker-compose up --build
+   ```
+   Isso construirá e iniciará ambos os contêineres:
+   * **Simulador Smartwatch (Frontend Vite):** Disponível em [http://localhost:3000](http://localhost:3000).
+   * **Dashboard de Estatísticas (Python Streamlit):** Disponível em [http://localhost:90](http://localhost:90).
+
+---
+
+### Opção 2: Execução Manual
+
+#### Serviço 1: Simulador Smartwatch (Vite + Javascript)
+1. Certifique-se de ter o **Node.js** instalado.
+2. Navegue até a pasta do projeto e instale as dependências:
    ```bash
    npm install
    ```
-
-3. **Inicie o servidor de desenvolvimento:**
-   Execute o comando abaixo:
+3. Inicie o servidor de desenvolvimento:
    ```bash
    npm run dev
    ```
-   
-4. **Acesse no navegador:**
-   Abra o endereço exibido no terminal (geralmente [http://localhost:3000](http://localhost:3000)).
+4. Acesse no navegador em [http://localhost:3000](http://localhost:3000).
+
+#### Serviço 2: Dashboard de Estatísticas (Python Streamlit)
+1. Certifique-se de ter o **Python 3.9+** instalado.
+2. Instale as dependências necessárias listadas em `Dockerfile.stats`:
+   ```bash
+   pip install streamlit pandas requests
+   ```
+3. Inicie o servidor Streamlit:
+   ```bash
+   streamlit run stats_app.py
+   ```
+4. Acesse no navegador em [http://localhost:90](http://localhost:90).
+
+---
+
+## 📊 Dashboard de Estatísticas (Streamlit)
+
+O painel secundário calcula e exibe em tempo real o desempenho do torneio para todas as partidas com status `finished` (finalizadas):
+* **Métricas Principais:** Contagem de partidas concluídas, total e média de gols por partida, cartões amarelos e vermelhos simulados, e faltas cometidas.
+* **Artilharia (Top Scorers):** Ranking gráfico dinâmico dos jogadores que marcaram gols no torneio.
+* **Desempenho de Confrontos:** Gráfico comparativo de vitórias de mandantes, empates e vitórias de visitantes.
+* **Ataques Eficientes:** Tabela interativa com os times que mais marcaram gols.
+* **Últimas Partidas:** Relatório com os placares das últimas partidas finalizadas.
+
+---
+
+## 🌐 Internacionalização e Suporte Multilíngue
+
+Todo o ecossistema (relógio inteligente, painel de controle e dashboard Streamlit) compartilha as traduções mapeadas no dicionário XML centralizado em `public/translate.xml`.
+
+O idioma ativo é determinado via parâmetro de busca na URL (`?language=` ou `?lang=`).
+
+### Idiomas Suportados:
+- **Português:** `pt`
+- **Inglês (padrão):** `en`
+- **Italiano:** `it`
+- **Espanhol:** `es`
+- **Francês:** `fr`
+
+---
+
+## 📦 Como Incorporar via Iframe Externo
+
+O painel de estatísticas foi configurado no arquivo `.streamlit/config.toml` desativando as proteções de CORS e XSRF para que possa ser incorporado livremente em sites e portais esportivos parceiros.
+
+### Exemplo de Código HTML:
+
+```html
+<!-- Incorpora o painel de estatísticas com idioma em português -->
+<iframe 
+  src="http://localhost:90/?language=pt" 
+  width="100%" 
+  height="750px" 
+  style="border: none; border-radius: 16px; background: #09090b; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"
+  allow="fullscreen">
+</iframe>
+```
+
+> 💡 **Dica de Produção:** Em ambientes de produção hospedados em HTTPS (como o Easypanel), configure um subdomínio seguro (ex: `https://stats.seudominio.com`) para apontar para o contêiner Streamlit na porta `90`. Isso evita problemas de bloqueio de **Mixed Content** (conteúdo misto HTTP dentro de HTTPS) nos navegadores dos usuários.
 
 ---
 
 ## 🛠️ Arquitetura e Estrutura de Arquivos
 
-O projeto é estruturado de forma modular utilizando HTML, CSS Vanilla e Javascript nativo estruturado em módulos ES6:
-
 ```text
-├── index.html              # Estrutura principal (Relógio e Painel de Controle)
+├── index.html              # Estrutura principal (Relógio, Painel e Modal do Iframe)
+├── docker-compose.yml      # Configuração de containers multi-serviços (Vite e Streamlit)
+├── Dockerfile              # Definição do container para o Simulador Smartwatch (Vite + Nginx)
+├── Dockerfile.stats        # Definição do container para o Dashboard de Estatísticas (Streamlit)
 ├── vite.config.js          # Configuração do proxy local (CORS Bypass)
 ├── package.json            # Scripts e dependências de desenvolvimento (Vite)
-├── README.md               # Este arquivo de instruções
+├── stats_app.py            # Dashboard de estatísticas em Python Streamlit
+├── .streamlit
+│   └── config.toml         # Configuração de portas, tema escuro e bypass de CORS/XSRF no Streamlit
+├── public
+│   └── translate.xml       # Dicionário XML central de traduções (PT, EN, IT, ES, FR)
 └── src
     ├── styles.css          # Estilos premium, glassmorphism, frame do smartwatch e animações
-    ├── app.js              # Controlador principal da aplicação (eventos, navegação e reatividade)
+    ├── app.js              # Controlador principal (eventos, carregamento dinâmico de iframe e reatividade)
     ├── api.js              # Cliente da API com estratégias híbridas de caching e fallback
     ├── simulator.js        # Motor de simulação de jogo ao vivo e gerador de eventos retroativos
-    ├── utils.js            # Utilitários (traduções de times, emojis de bandeira e cálculo de tabelas)
+    ├── utils.js            # Utilitários (traduções de times, emojis de bandeira e standings)
     └── fallback-matches.js # Base estática local com os 104 jogos para modo offline
 ```
-
----
-
-## 🌟 Recursos Principais
-
-### 1. Simulador de Smartwatch Físico Interativo
-- **Tela Circular Perfeita:** Conteúdo centralizado e dimensionado para evitar cortes nas bordas redondas.
-- **Carrossel de Telas (Páginas 1 a 3):**
-  - **Tela 1 (Países):** Busca reativa de seleções, filtros por confederação continental (América do Sul, Europa, África, etc.) e marcação de favoritos (estrela).
-  - **Tela 2 (Grupos):** Classificação dinâmica recalculada em tempo real para os grupos A até L. Exibe pontos de status verdes na zona de classificação direta (top 2).
-  - **Tela 3 (Jogos do Dia):** Lista organizada da rodada contendo seções de jogos "Ao vivo" e "Mais tarde".
-- **Gesto de Swipe:** Arraste a tela do relógio para os lados com o mouse ou toque para alternar entre as telas.
-- **Botão Físico (Coroa):** Toque na coroa lateral do relógio para retroceder da tela de detalhes ou ciclar entre as abas.
-- **Tela 4 (Detalhes do Jogo):** Exibe o placar ampliado, estádio, cidade e uma linha do tempo vertical de eventos do jogo (gols e cartões).
-
-### 2. Motor de Simulação em Tempo Real (Live Matchday)
-- A base da API possui 4 jogos agendados para a data de **14 de Junho de 2026** (hoje na linha do tempo simulada):
-  1. *Alemanha × Curaçao* (Grupo E)
-  2. *Holanda × Japão* (Grupo F)
-  3. *Costa do Marfim × Equador* (Grupo E)
-  4. *Suécia × Tunísia* (Grupo F)
-- Ao clicar em **"Iniciar Simulação"** no painel direito:
-  - Os jogos passam de "Agendados" para "Ao vivo" simultaneamente.
-  - O minuto do jogo avança de 1' até 90'.
-  - Gols e cartões amarelos/vermelhos são disparados aleatoriamente com base em probabilidades realistas.
-  - Os nomes dos goleadores são sorteados dinamicamente com base em elencos reais pré-cadastrados para cada país.
-  - A tabela de classificação dos grupos e a pontuação dos países na Tela 1 são atualizadas **em tempo real** conforme os gols acontecem!
-- **Controle de Velocidade:** Acelere os ticks da partida (100ms por minuto de jogo) para ver a tabela se transformar em segundos ou use velocidades mais calmas.
-
-### 3. Bypass de CORS & Resiliência
-- **Proxy Vite:** O arquivo `vite.config.js` está configurado para atuar como proxy, interceptando chamadas para `/api/*` e repassando para a URL da API oficial injetando o cabeçalho `X-Token: COPA26!`. Isso resolve problemas de CORS nos navegadores.
-- **Estratégia Híbrida de Fallback:** O cliente `src/api.js` tentará usar o proxy local. Se falhar, tentará a requisição direta. Se ambos falharem (sem internet ou rodando sem servidor de desenvolvimento), ele carregará automaticamente a base offline local de 104 jogos, garantindo que o app funcione em qualquer situação.
-- **Persistência Local:** Favoritos e o estado ativo da simulação são guardados no `localStorage`, permitindo que o progresso não seja perdido ao recarregar a página.
