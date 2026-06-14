@@ -293,8 +293,6 @@ PLOTLY_DARK = dict(
     paper_bgcolor='rgba(0,0,0,0)',
     plot_bgcolor='rgba(0,0,0,0)',
     font=dict(family='Outfit, sans-serif', color='#a1a1aa'),
-    xaxis=dict(gridcolor='#27272a', zerolinecolor='#27272a'),
-    yaxis=dict(gridcolor='#27272a', zerolinecolor='#27272a'),
     margin=dict(l=0, r=0, t=30, b=0),
 )
 
