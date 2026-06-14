@@ -17,6 +17,10 @@ let activeGroupFilter = 'Todos';
 
 let simulator = null;
 
+// Internacionalização (XML)
+let translations = {};
+let activeLang = 'pt';
+
 // ==========================================================================
 // DOM ELEMENTS CACHE
 // ==========================================================================
@@ -65,6 +69,16 @@ const DOM = {
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', async () => {
   initClock();
+  
+  // Detecta o idioma ativo (?language= ou navegador)
+  detectLanguage();
+  
+  // Carrega o arquivo translate.xml
+  await loadTranslations();
+  
+  // Traduz os elementos estáticos do DOM
+  translateStaticElements();
+  
   initAutoScaling();
   initSwipeGestures();
   loadFavorites();
@@ -190,27 +204,120 @@ function initSimulator() {
 }
 
 // ==========================================================================
+// INTERNACIONALIZAÇÃO (XML PARSER & HELPER)
+// ==========================================================================
+
+// Detecta o idioma a partir da URL (?language=) ou do navegador do usuário
+function detectLanguage() {
+  const urlParams = new URLSearchParams(window.location.search);
+  let lang = urlParams.get('language') || urlParams.get('lang');
+  
+  if (!lang) {
+    const browserLang = navigator.language || navigator.userLanguage;
+    if (browserLang) {
+      lang = browserLang.split('-')[0];
+    }
+  }
+  
+  if (lang) {
+    lang = lang.toLowerCase();
+    const supported = ['pt', 'en', 'it', 'es', 'fr'];
+    if (supported.includes(lang)) {
+      activeLang = lang;
+      return;
+    }
+  }
+  
+  activeLang = 'pt'; // padrão caso indisponível
+}
+
+// Faz o fetch e parse do dicionário XML translate.xml
+async function loadTranslations() {
+  try {
+    const response = await fetch('./translate.xml');
+    if (!response.ok) throw new Error('Falha ao obter translate.xml');
+    
+    const xmlText = await response.text();
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
+    
+    const keys = xmlDoc.getElementsByTagName('key');
+    for (let i = 0; i < keys.length; i++) {
+      const keyName = keys[i].getAttribute('name');
+      translations[keyName] = {};
+      
+      const langs = ['pt', 'en', 'it', 'es', 'fr'];
+      langs.forEach(lang => {
+        const node = keys[i].getElementsByTagName(lang)[0];
+        translations[keyName][lang] = node ? node.textContent.trim() : '';
+      });
+    }
+    console.log('Dicionário de traduções XML inicializado.');
+  } catch (error) {
+    console.error('Erro no processamento das traduções:', error);
+  }
+}
+
+// Retorna o valor traduzido para a chave especificada
+function t(key, defaultValue = '') {
+  if (translations[key] && translations[key][activeLang]) {
+    return translations[key][activeLang];
+  }
+  return defaultValue || key;
+}
+
+// Traduz todos os elementos estáticos do HTML marcado com data-translate
+function translateStaticElements() {
+  // Traduz conteúdo textual
+  document.querySelectorAll('[data-translate]').forEach(el => {
+    const key = el.getAttribute('data-translate');
+    if (key === 'start_sim' || key === 'reset_day') {
+      // Mantém os ícones internos do botão
+      const span = el.querySelector('span');
+      const text = t(key);
+      el.innerHTML = '';
+      if (span) el.appendChild(span);
+      el.appendChild(document.createTextNode(' ' + text));
+    } else {
+      el.textContent = t(key, el.textContent);
+    }
+  });
+
+  // Traduz placeholders de input
+  document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-translate-placeholder');
+    el.placeholder = t(key, el.placeholder);
+  });
+}
+
+// Retorna a palavra "Grupo" traduzida amigavelmente
+function getGroupTranslation() {
+  return activeLang === 'en' ? 'Group' :
+         activeLang === 'it' ? 'Gruppo' :
+         activeLang === 'fr' ? 'Groupe' : 'Grupo';
+}
+
+// ==========================================================================
 // SINCRONIZAÇÃO E CONTROLE DA API
 // ==========================================================================
 async function syncData(force = false) {
-  setApiStatus('pending', 'Sincronizando dados...');
+  setApiStatus('pending', t('api_syncing', 'Sincronizando dados...'));
   try {
-    const isMock = force ? false : localStorage.getItem('copa26_matches_state') === null;
     matchesState = await loadMatches(force);
     standingsState = calculateStandings(matchesState);
     
     const count = matchesState.length;
+    const isOffline = matchesState === apiOfflineFallback();
     
-    // Verifica se os dados vieram da API ou offline
-    const isOffline = matchesState === apiOfflineFallback(); 
     if (isOffline) {
-      setApiStatus('offline', `Offline (${count} jogos carregados)`);
+      setApiStatus('offline', `${t('api_sync_error', 'Offline')} (${count})`);
     } else {
-      setApiStatus('online', `Conectado - API (${count} jogos)`);
+      const connText = activeLang === 'en' ? 'Connected' : activeLang === 'it' ? 'Connesso' : activeLang === 'es' ? 'Conectado' : activeLang === 'fr' ? 'Connecté' : 'Conectado';
+      setApiStatus('online', `${connText} - API (${count})`);
     }
   } catch (error) {
     console.error('Erro na sincronização:', error);
-    setApiStatus('offline', 'Erro. Usando cache local.');
+    setApiStatus('offline', t('api_sync_error', 'Erro. Usando cache local.'));
   }
 }
 
@@ -230,7 +337,6 @@ function setApiStatus(status, text) {
 }
 
 function apiOfflineFallback() {
-  // Apenas utilitário para comparação de referência
   return null;
 }
 
@@ -339,8 +445,14 @@ function setupUIEventListeners() {
   
   if (DOM.btnResetSim) {
     DOM.btnResetSim.addEventListener('click', async () => {
-      if (confirm('Deseja reiniciar a simulação do dia? Os placares e eventos serão resetados.')) {
-        setApiStatus('pending', 'Resetando estado...');
+      const resetMsg = activeLang === 'en' ? 'Reset today\'s simulation? Scores and events will be lost.' :
+                        activeLang === 'it' ? 'Ripristinare la simulazione? Risultati e eventi andranno persi.' :
+                        activeLang === 'es' ? '¿Reiniciar simulación? Marcadores y eventos se perderán.' :
+                        activeLang === 'fr' ? 'Réinitialiser la simulation? Les scores et événements seront perdus.' :
+                        'Deseja reiniciar a simulação do dia? Os placares e eventos serão resetados.';
+                        
+      if (confirm(resetMsg)) {
+        setApiStatus('pending', t('api_syncing', 'Resetando estado...'));
         matchesState = await resetMatchesState();
         standingsState = calculateStandings(matchesState);
         initSimulator();
@@ -361,7 +473,13 @@ function setupUIEventListeners() {
   // Sincronização API Manual
   if (DOM.btnForceSync) {
     DOM.btnForceSync.addEventListener('click', async () => {
-      if (confirm('Isso irá apagar a simulação em andamento e sincronizar dados atualizados da API externa. Deseja prosseguir?')) {
+      const syncMsg = activeLang === 'en' ? 'This will delete the simulation and sync fresh data from the API. Proceed?' :
+                      activeLang === 'it' ? 'Questo cancellerà la simulazione e sincronizzerà i dati dall\'API. Procedere?' :
+                      activeLang === 'es' ? 'Esto borrará la simulación y sincronizará datos de la API. ¿Proceder?' :
+                      activeLang === 'fr' ? 'Cela supprimera la simulation et synchronisera les données API. Procéder?' :
+                      'Isso irá apagar a simulação em andamento e sincronizar dados atualizados da API externa. Deseja prosseguir?';
+                      
+      if (confirm(syncMsg)) {
         simulator.stop();
         await syncData(true);
         initSimulator();
@@ -393,20 +511,15 @@ function initSwipeGestures() {
     const diffX = touchEndX - touchStartX;
     const diffY = touchEndY - touchStartY;
     
-    // Ignora swipes predominantemente verticais para permitir scroll de listas
     if (Math.abs(diffX) < Math.abs(diffY)) return;
-    
-    // Se o detalhe do jogo estiver ativo, não faz swipe lateral das páginas principais
     if (DOM.matchDetailView.classList.contains('active')) return;
     
     const minSwipeDist = 50; // pixels
     if (Math.abs(diffX) > minSwipeDist) {
       if (diffX < 0) {
-        // Swipe Esquerda (Avançar Página)
         const nextPage = Math.min(currentPage + 1, 2);
         navigateToPage(nextPage);
       } else {
-        // Swipe Direita (Voltar Página)
         const prevPage = Math.max(currentPage - 1, 0);
         navigateToPage(prevPage);
       }
@@ -417,12 +530,10 @@ function initSwipeGestures() {
 function navigateToPage(pageIndex) {
   currentPage = pageIndex;
   
-  // Transiciona o carrossel
   if (DOM.carouselViewport) {
     DOM.carouselViewport.style.transform = `translateX(-${currentPage * 100}%)`;
   }
   
-  // Atualiza os dots
   DOM.dots.forEach((dot, index) => {
     if (index === currentPage) {
       dot.classList.add('active');
@@ -461,7 +572,8 @@ function renderAll() {
 function renderCountries() {
   if (!DOM.countriesList) return;
   
-  // Mapeia todas as 48 seleções para obter seus pontos e grupo nos standings
+  const groupWord = getGroupTranslation();
+  
   const countriesData = Object.keys(TEAM_MAP).map(englishName => {
     const info = getTeamInfo(englishName);
     const stats = getCountryStats(englishName, standingsState);
@@ -469,54 +581,50 @@ function renderCountries() {
     
     return {
       englishName,
-      portugueseName: info.name,
+      translatedName: t(englishName, info.name),
       emoji: info.emoji,
       region: info.region,
       group: stats.group,
       points: stats.points,
       isFavorite,
-      // Status de classificado simplificado (top 2 do grupo com jogos finalizados)
       isClassified: stats.games >= 3 && isTeamInQualificationZone(englishName, stats.group)
     };
   });
   
-  // Filtro por busca
   let filtered = countriesData;
   if (countrySearchQuery.trim() !== '') {
     const q = countrySearchQuery.toLowerCase();
     filtered = filtered.filter(c => 
-      c.portugueseName.toLowerCase().includes(q) || 
+      c.translatedName.toLowerCase().includes(q) || 
       c.englishName.toLowerCase().includes(q)
     );
   }
   
-  // Filtro por continente
   if (activeCountryFilter !== 'Todos') {
     filtered = filtered.filter(c => c.region === activeCountryFilter);
   }
   
-  // Ordenação: Favoritos primeiro, depois por pontos desc, e nome asc
   filtered.sort((a, b) => {
     if (a.isFavorite && !b.isFavorite) return -1;
     if (!a.isFavorite && b.isFavorite) return 1;
     if (b.points !== a.points) return b.points - a.points;
-    return a.portugueseName.localeCompare(b.portugueseName);
+    return a.translatedName.localeCompare(b.translatedName);
   });
   
-  // Renderiza HTML
   if (filtered.length === 0) {
-    DOM.countriesList.innerHTML = `<div class="no-events-placeholder">Nenhum país encontrado</div>`;
+    DOM.countriesList.innerHTML = `<div class="no-events-placeholder">${t('no_country_found', 'Nenhum país encontrado')}</div>`;
     return;
   }
   
   DOM.countriesList.innerHTML = filtered.map(c => {
     const isPlayingLive = isCountryPlayingLive(c.englishName);
+    const groupLabel = c.group.replace('Grupo', groupWord);
     
     let statusHTML = '';
     if (isPlayingLive) {
-      statusHTML = `<span class="status-badge live">Ao vivo</span>`;
+      statusHTML = `<span class="status-badge live">${t('live_badge', 'Ao vivo')}</span>`;
     } else if (c.isClassified) {
-      statusHTML = `<span class="status-badge classified">Classificado</span>`;
+      statusHTML = `<span class="status-badge classified">${t('classified_badge', 'Classificado')}</span>`;
     }
     
     return `
@@ -524,8 +632,8 @@ function renderCountries() {
         <div class="card-left">
           <div class="card-flag-wrapper">${c.emoji}</div>
           <div class="card-info">
-            <span class="card-title">${c.portugueseName}</span>
-            <span class="card-subtitle">${c.group} • ${c.points} pts</span>
+            <span class="card-title">${c.translatedName}</span>
+            <span class="card-subtitle">${groupLabel} • ${c.points} pts</span>
           </div>
         </div>
         <div class="card-right">
@@ -540,18 +648,15 @@ function renderCountries() {
   }).join('');
 }
 
-// Helper para descobrir se o time está na zona de classificação (top 2)
 function isTeamInQualificationZone(teamName, groupLabel) {
   const groupLetter = groupLabel.replace('Grupo ', '');
   const groupStanding = standingsState[groupLetter];
   if (!groupStanding) return false;
   
-  // Encontra o índice da seleção nos standings ordenados
   const index = groupStanding.findIndex(t => t.team === teamName);
   return index >= 0 && index <= 1; // 1º ou 2º lugar
 }
 
-// Helper para verificar se a seleção está jogando ao vivo
 function isCountryPlayingLive(teamName) {
   return matchesState.some(m => 
     m.status === 'live' && 
@@ -559,9 +664,7 @@ function isCountryPlayingLive(teamName) {
   );
 }
 
-// Abrir lista de jogos de um país específico (redireciona para Jogos do Dia ou foca)
 window.openCountryMatches = (countryName) => {
-  // Encontra o jogo de "hoje" dessa seleção ou abre a tela de detalhes se tiver jogo ao vivo
   const todayMatch = matchesState.find(m => 
     m.date === '2026-06-14' && 
     (m.home_team === countryName || m.away_team === countryName)
@@ -570,12 +673,16 @@ window.openCountryMatches = (countryName) => {
   if (todayMatch) {
     openMatchDetail(todayMatch.id);
   } else {
-    // Busca qualquer jogo ativo ou último jogo jogado por esse país
     const relevantMatch = matchesState.find(m => m.home_team === countryName || m.away_team === countryName);
     if (relevantMatch) {
       openMatchDetail(relevantMatch.id);
     } else {
-      alert(`Nenhum jogo cadastrado para a seleção: ${getTeamInfo(countryName).name}`);
+      const alertMsg = activeLang === 'en' ? 'No matches scheduled for ' :
+                       activeLang === 'it' ? 'Nessuna partita per ' :
+                       activeLang === 'es' ? 'Sin partidos programados para ' :
+                       activeLang === 'fr' ? 'Aucun match programmé pour ' :
+                       'Nenhum jogo cadastrado para a seleção: ';
+      alert(`${alertMsg}${t(countryName, getTeamInfo(countryName).name)}`);
     }
   }
 };
@@ -588,6 +695,7 @@ window.toggleFav = (countryName) => {
 function renderGroups() {
   if (!DOM.groupsList) return;
   
+  const groupWord = getGroupTranslation();
   let groupsToRender = Object.keys(standingsState).sort();
   
   if (activeGroupFilter !== 'Todos') {
@@ -595,30 +703,31 @@ function renderGroups() {
   }
   
   if (groupsToRender.length === 0 || Object.keys(standingsState).length === 0) {
-    DOM.groupsList.innerHTML = `<div class="no-events-placeholder">Carregando grupos...</div>`;
+    DOM.groupsList.innerHTML = `<div class="no-events-placeholder">${t('groups_title', 'Carregando grupos...')}</div>`;
     return;
   }
   
   DOM.groupsList.innerHTML = groupsToRender.map(g => {
     const teams = standingsState[g] || [];
     
-    const tableRows = teams.map((t, idx) => {
-      const info = getTeamInfo(t.team);
-      const dotColor = idx <= 1 ? 'green' : 'gray'; // top 2 classificados
-      const isFavorite = favoritesState.has(t.team);
+    const tableRows = teams.map((st, idx) => {
+      const info = getTeamInfo(st.team);
+      const dotColor = idx <= 1 ? 'green' : 'gray'; 
+      const isFavorite = favoritesState.has(st.team);
+      const translatedTeamName = t(st.team, info.name);
       
       return `
         <tr>
           <td class="col-pos">${idx + 1}</td>
-          <td class="col-team" onclick="openCountryMatches('${t.team}')" style="cursor:pointer;">
+          <td class="col-team" onclick="openCountryMatches('${st.team}')" style="cursor:pointer;">
             <span>${info.emoji}</span>
             <span class="col-team-name" style="${isFavorite ? 'color: #ffb703; font-weight: 600;' : ''}">
-              ${info.name}
+              ${translatedTeamName}
             </span>
           </td>
-          <td class="col-stat">${t.J}</td>
-          <td class="col-stat">${t.V}</td>
-          <td class="col-pts">${t.P}</td>
+          <td class="col-stat">${st.J}</td>
+          <td class="col-stat">${st.V}</td>
+          <td class="col-pts">${st.P}</td>
           <td style="width: 10px; text-align: right;">
             <span class="status-dot ${dotColor}"></span>
           </td>
@@ -629,7 +738,7 @@ function renderGroups() {
     return `
       <div class="group-section">
         <div class="group-header">
-          <span>GRUPO ${g}</span>
+          <span>${groupWord.toUpperCase()} ${g}</span>
           <span style="font-size: 0.6rem; color: var(--color-text-muted);">J  V  P</span>
         </div>
         <table class="group-table">
@@ -656,65 +765,56 @@ function renderGroups() {
 function renderMatches() {
   if (!DOM.matchesList) return;
   
-  // Filtra jogos para o dia de simulação ativa (14/06/2026)
   const todayDate = '2026-06-14';
   const todayMatches = matchesState.filter(m => m.date === todayDate);
   
   if (todayMatches.length === 0) {
-    DOM.matchesList.innerHTML = `<div class="no-events-placeholder">Nenhum jogo agendado para hoje</div>`;
+    DOM.matchesList.innerHTML = `<div class="no-events-placeholder">${t('no_match_today', 'Nenhum jogo agendado para hoje')}</div>`;
     return;
   }
   
-  // Divide em Ao Vivo e Mais Tarde (incluindo finalizados de hoje)
   const liveMatches = todayMatches.filter(m => m.status === 'live');
   const otherMatches = todayMatches.filter(m => m.status !== 'live');
   
-  // Ordena os outros jogos por hora
   otherMatches.sort((a, b) => a.time.localeCompare(b.time));
   
   let html = '';
   
-  // Bloco Ao Vivo
   if (liveMatches.length > 0) {
-    html += `<div class="section-divider">Ao vivo</div>`;
+    html += `<div class="section-divider">${t('live_badge', 'Ao vivo')}</div>`;
     html += liveMatches.map(m => renderMatchCard(m, true)).join('');
   }
   
-  // Bloco Mais Tarde / Finalizados
   if (otherMatches.length > 0) {
     const hasLive = liveMatches.length > 0;
-    html += `<div class="section-divider" style="${hasLive ? 'margin-top:12px;' : ''}">Mais Tarde</div>`;
+    html += `<div class="section-divider" style="${hasLive ? 'margin-top:12px;' : ''}">${t('later_section', 'Mais Tarde')}</div>`;
     html += otherMatches.map(m => renderMatchCard(m, false)).join('');
   }
   
   DOM.matchesList.innerHTML = html;
 }
 
-// Helper para renderizar um mini-card de jogo
 function renderMatchCard(m, isLive) {
   const homeInfo = getTeamInfo(m.home_team);
   const awayInfo = getTeamInfo(m.away_team);
   const isFavorite = favoritesState.has(m.home_team) || favoritesState.has(m.away_team);
+  const groupWord = getGroupTranslation();
   
-  // Placar ou Horário
   let scoreHTML = '';
   let statusBadgeHTML = '';
   
   if (m.status === 'live') {
     const scoreVal = m.score || '0-0';
     scoreHTML = `<span class="match-score">${scoreVal}</span>`;
-    
-    // Obtém o minuto simulado do relógio global
-    const minStr = simulator ? `${simulator.currentMinute}'` : 'Ao vivo';
+    const minStr = simulator ? `${simulator.currentMinute}'` : t('live_badge');
     statusBadgeHTML = `<span class="match-badge-inline" style="background-color:#ef4444; color:#fff;">${minStr}</span>`;
   } else if (m.status === 'finished') {
     const scoreVal = m.score || '0-0';
     scoreHTML = `<span class="match-score" style="color: var(--color-text-secondary);">${scoreVal}</span>`;
-    statusBadgeHTML = `<span class="status-badge time-badge">Fim</span>`;
+    statusBadgeHTML = `<span class="status-badge time-badge">${t('end_badge', 'Fim')}</span>`;
   } else {
-    // Scheduled
     scoreHTML = `<span class="match-score" style="color: var(--color-text-muted); font-size: 0.75rem; font-weight: 500;">${m.time}</span>`;
-    statusBadgeHTML = `<span class="status-badge time-badge">Agendado</span>`;
+    statusBadgeHTML = `<span class="status-badge time-badge">${t('scheduled_badge', 'Agendado')}</span>`;
   }
   
   return `
@@ -732,7 +832,7 @@ function renderMatchCard(m, isLive) {
       </div>
       <div class="match-card-meta">
         ${statusBadgeHTML}
-        <span style="font-size: 0.6rem; color: var(--color-text-muted);">Grupo ${m.group} • ${m.city}</span>
+        <span style="font-size: 0.6rem; color: var(--color-text-muted);">${groupWord} ${m.group} • ${m.city}</span>
       </div>
     </div>
   `;
@@ -744,17 +844,17 @@ function renderMatchDetail(m) {
   
   const homeInfo = getTeamInfo(m.home_team);
   const awayInfo = getTeamInfo(m.away_team);
+  const groupWord = getGroupTranslation();
   
-  // Renders Card superior do placar
-  let statusText = 'AGENDADO';
+  let statusText = t('scheduled_badge').toUpperCase();
   let badgeClass = 'scheduled';
   
   if (m.status === 'live') {
     const minVal = simulator ? `${simulator.currentMinute}' ` : '';
-    statusText = `${minVal}AO VIVO`;
+    statusText = `${minVal}${t('live_badge').toUpperCase()}`;
     badgeClass = 'simulated';
   } else if (m.status === 'finished') {
-    statusText = 'FINALIZADO';
+    statusText = t('end_badge').toUpperCase();
     badgeClass = '';
   }
   
@@ -775,42 +875,38 @@ function renderMatchDetail(m) {
       </div>
     </div>
     <div class="detail-meta-row">
-      <div class="detail-meta-badge">Grupo ${m.group}</div>
+      <div class="detail-meta-badge">${groupWord} ${m.group}</div>
       <div class="detail-meta-badge location">📍 ${m.city}</div>
     </div>
   `;
   
-  // Renders Linha do tempo de Eventos
   let events = [];
   if (m.status === 'finished') {
-    // Gera eventos estáticos fictícios se for jogo finalizado do histórico
     events = generateEventsForFinishedMatch(m);
   } else {
-    // Jogos ao vivo ou agendados usam a lista dinâmica do simulador
     events = m.events || [];
   }
   
   if (events.length === 0) {
-    DOM.matchTimeline.innerHTML = `<div class="no-events-placeholder">Aguardando início da partida</div>`;
+    DOM.matchTimeline.innerHTML = `<div class="no-events-placeholder">${t('waiting_match', 'Aguardando início da partida')}</div>`;
     return;
   }
   
-  // Renderiza eventos invertidos (mais recentes no topo)
   const sortedEvents = [...events].sort((a, b) => b.minute - a.minute);
   
   DOM.matchTimeline.innerHTML = sortedEvents.map(e => {
     let icon = '⚽';
     let typeClass = 'goal';
-    let label = 'Gol!';
+    let label = t('goal_label', 'Gol!');
     
     if (e.type === 'card_yellow') {
       icon = '🟨';
       typeClass = 'card_yellow';
-      label = 'Cartão Amarelo';
+      label = t('card_yellow', 'Cartão Amarelo');
     } else if (e.type === 'card_red') {
       icon = '🟥';
       typeClass = 'card_red';
-      label = 'Cartão Vermelho';
+      label = t('card_red', 'Cartão Vermelho');
     }
     
     const teamCode = e.team === 'home' ? homeInfo.code : awayInfo.code;
@@ -836,16 +932,17 @@ function renderFavoritesPanel() {
   if (!DOM.favListContainer) return;
   
   if (favoritesState.size === 0) {
-    DOM.favListContainer.innerHTML = `<span class="fav-tag-empty">Nenhuma seleção favoritada. Toque na estrela no relógio!</span>`;
+    DOM.favListContainer.innerHTML = `<span class="fav-tag-empty">${t('no_favorites')}</span>`;
     return;
   }
   
   DOM.favListContainer.innerHTML = [...favoritesState].map(fav => {
     const info = getTeamInfo(fav);
+    const translatedName = t(fav, info.name);
     return `
       <div class="fav-tag" onclick="focusOnCountry('${fav}')">
         <span>${info.emoji}</span>
-        <span>${info.name}</span>
+        <span>${translatedName}</span>
       </div>
     `;
   }).join('');
@@ -855,13 +952,11 @@ function renderFavoritesPanel() {
 window.focusOnCountry = (countryName) => {
   navigateToPage(0); // vai para a tela de países
   
-  // Limpa filtros e busca pelo nome
   if (DOM.countrySearch) {
-    const pName = getTeamInfo(countryName).name;
+    const pName = t(countryName, getTeamInfo(countryName).name);
     DOM.countrySearch.value = pName;
     countrySearchQuery = pName;
     
-    // Reseta botões de filtro continental para active = Todos
     DOM.countryFilters.querySelectorAll('.filter-pill').forEach(b => {
       if (b.dataset.filter === 'Todos') b.classList.add('active');
       else b.classList.remove('active');
@@ -880,21 +975,36 @@ function updateSimulatorPanel() {
   
   // Minuto
   if (DOM.simMinute) {
-    DOM.simMinute.textContent = simulator.currentMinute > 0 ? `${simulator.currentMinute}'` : '0\' (Não Iniciado)';
+    const notStartedWord = activeLang === 'en' ? 'Not Started' :
+                          activeLang === 'it' ? 'Non Iniziato' :
+                          activeLang === 'es' ? 'No Iniciado' :
+                          activeLang === 'fr' ? 'Pas Commencé' :
+                          'Não Iniciado';
+    DOM.simMinute.textContent = simulator.currentMinute > 0 ? `${simulator.currentMinute}'` : `0' (${notStartedWord})`;
   }
   
   // Status texto
   if (DOM.simStatus) {
     if (simulator.isSimulating) {
-      DOM.simStatus.textContent = 'Em Andamento';
+      const inProgressWord = activeLang === 'en' ? 'In Progress' :
+                            activeLang === 'it' ? 'In Corso' :
+                            activeLang === 'es' ? 'En Progreso' :
+                            activeLang === 'fr' ? 'En Cours' :
+                            'Em Andamento';
+      DOM.simStatus.textContent = inProgressWord;
       DOM.simStatus.className = 'status-val active';
-      DOM.btnStartSim.innerHTML = '<span>⏸</span> Pausar Simulação';
+      DOM.btnStartSim.innerHTML = `<span>⏸</span> ${t('pause_sim')}`;
       DOM.btnStartSim.classList.remove('btn-primary');
       DOM.btnStartSim.classList.add('btn-danger');
     } else {
-      DOM.simStatus.textContent = simulator.currentMinute === 90 ? 'Finalizado' : 'Pausado';
+      const pausedWord = activeLang === 'en' ? 'Paused' :
+                         activeLang === 'it' ? 'In Pausa' :
+                         activeLang === 'es' ? 'Pausado' :
+                         activeLang === 'fr' ? 'En Pause' :
+                         'Pausado';
+      DOM.simStatus.textContent = simulator.currentMinute === 90 ? t('end_badge').toUpperCase() : pausedWord;
       DOM.simStatus.className = 'status-val';
-      DOM.btnStartSim.innerHTML = '<span>▶</span> Iniciar Simulação';
+      DOM.btnStartSim.innerHTML = `<span>▶</span> ${t('start_sim')}`;
       DOM.btnStartSim.classList.remove('btn-danger');
       DOM.btnStartSim.classList.add('btn-primary');
     }

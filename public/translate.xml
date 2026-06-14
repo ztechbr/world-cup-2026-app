@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+  <!-- Interface Geral -->
+  <key name="countries_title">
+    <pt>Países</pt>
+    <en>Countries</en>
+    <it>Paesi</it>
+    <es>Países</es>
+    <fr>Pays</fr>
+  </key>
+  <key name="search_placeholder">
+    <pt>Buscar país...</pt>
+    <en>Search country...</en>
+    <it>Cerca paese...</it>
+    <es>Buscar país...</es>
+    <fr>Rechercher un pays...</fr>
+  </key>
+  <key name="groups_title">
+    <pt>Grupos</pt>
+    <en>Groups</en>
+    <it>Gruppi</it>
+    <es>Grupos</es>
+    <fr>Groupes</fr>
+  </key>
+  <key name="matches_title">
+    <pt>Jogos do Dia</pt>
+    <en>Matches of the Day</en>
+    <it>Partite del Giorno</it>
+    <es>Partidos del Día</es>
+    <fr>Matchs du Jour</fr>
+  </key>
+  <key name="live_badge">
+    <pt>Ao vivo</pt>
+    <en>Live</en>
+    <it>In diretta</it>
+    <es>En vivo</es>
+    <fr>En direct</fr>
+  </key>
+  <key name="classified_badge">
+    <pt>Classificado</pt>
+    <en>Classified</en>
+    <it>Qualificato</it>
+    <es>Clasificado</es>
+    <fr>Qualifié</fr>
+  </key>
+  <key name="later_section">
+    <pt>Mais Tarde</pt>
+    <en>Later</en>
+    <it>Più tardi</it>
+    <es>Más tarde</es>
+    <fr>Plus tard</fr>
+  </key>
+  <key name="end_badge">
+    <pt>Fim</pt>
+    <en>FT</en>
+    <it>Fine</it>
+    <es>Fin</es>
+    <fr>Fin</fr>
+  </key>
+  <key name="scheduled_badge">
+    <pt>Agendado</pt>
+    <en>Scheduled</en>
+    <it>Programmato</it>
+    <es>Programado</es>
+    <fr>Programmé</fr>
+  </key>
+  <key name="events_title">
+    <pt>Eventos</pt>
+    <en>Events</en>
+    <it>Eventi</it>
+    <es>Eventos</es>
+    <fr>Événements</fr>
+  </key>
+  <key name="waiting_match">
+    <pt>Aguardando início da partida</pt>
+    <en>Waiting for match to start</en>
+    <it>In attesa dell'inizio</it>
+    <es>Esperando inicio del partido</es>
+    <fr>En attente du début</fr>
+  </key>
+  <key name="goal_label">
+    <pt>Gol!</pt>
+    <en>Goal!</en>
+    <it>Gol!</it>
+    <es>¡Gol!</es>
+    <fr>But!</fr>
+  </key>
+  <key name="card_yellow">
+    <pt>Cartão Amarelo</pt>
+    <en>Yellow Card</en>
+    <it>Cartellino Giallo</it>
+    <es>Tarjeta Amarilla</es>
+    <fr>Carton Jaune</fr>
+  </key>
+  <key name="card_red">
+    <pt>Cartão Vermelho</pt>
+    <en>Red Card</en>
+    <it>Cartellino Rosso</it>
+    <es>Tarjeta Roja</es>
+    <fr>Carton Rouge</fr>
+  </key>
+  <key name="no_country_found">
+    <pt>Nenhum país encontrado</pt>
+    <en>No country found</en>
+    <it>Nessun paese trovato</it>
+    <es>Ningún país encontrado</es>
+    <fr>Aucun pays trouvé</fr>
+  </key>
+  <key name="no_match_today">
+    <pt>Nenhum jogo agendado para hoje</pt>
+    <en>No matches scheduled for today</en>
+    <it>Nessuna partita oggi</it>
+    <es>Ningún partido hoy</es>
+    <fr>Aucun match aujourd'hui</fr>
+  </key>
+  
+  <!-- Painel de Controle (Dashboard) -->
+  <key name="control_title">
+    <pt>Copa do Mundo 2026</pt>
+    <en>World Cup 2026</en>
+    <it>Coppa del Mondo 2026</it>
+    <es>Copa del Mundo 2026</es>
+    <fr>Coupe du Monde 2026</fr>
+  </key>
+  <key name="control_subtitle">
+    <pt>Painel de Controle e Simulação Live</pt>
+    <en>Control Panel and Live Simulation</en>
+    <it>Pannello di Controllo e Simulazione</it>
+    <es>Panel de Control y Simulación en Vivo</es>
+    <fr>Panneau de Contrôle et Simulation</fr>
+  </key>
+  <key name="control_matchday">
+    <pt>Controle do Dia do Jogo</pt>
+    <en>Matchday Control</en>
+    <it>Controllo Giornata</it>
+    <es>Control del Dia de Partido</es>
+    <fr>Contrôle de la Journée</fr>
+  </key>
+  <key name="sim_date">
+    <pt>Simulado (Data):</pt>
+    <en>Simulated Date:</en>
+    <it>Data Simulata:</it>
+    <es>Fecha Simulada:</es>
+    <fr>Date Simulée:</fr>
+  </key>
+  <key name="sim_status">
+    <pt>Status da Simulação:</pt>
+    <en>Simulation Status:</en>
+    <it>Stato della Simulazione:</it>
+    <es>Estado de la Simulación:</es>
+    <fr>Statut de la Simulation:</fr>
+  </key>
+  <key name="sim_minute">
+    <pt>Minuto do Jogo:</pt>
+    <en>Match Minute:</en>
+    <it>Minuto di Gioco:</it>
+    <es>Minuto del Partido:</es>
+    <fr>Minute de Jeu:</fr>
+  </key>
+  <key name="start_sim">
+    <pt>Iniciar Simulação</pt>
+    <en>Start Simulation</en>
+    <it>Avvia Simulazione</it>
+    <es>Iniciar Simulación</es>
+    <fr>Démarrer Simulation</fr>
+  </key>
+  <key name="pause_sim">
+    <pt>Pausar Simulação</pt>
+    <en>Pause Simulation</en>
+    <it>Pausa Simulazione</it>
+    <es>Pausar Simulación</es>
+    <fr>Pause Simulation</fr>
+  </key>
+  <key name="reset_day">
+    <pt>Reiniciar Dia</pt>
+    <en>Reset Day</en>
+    <it>Reimposta Giorno</it>
+    <es>Reiniciar Día</es>
+    <fr>Réinitialiser</fr>
+  </key>
+  <key name="speed">
+    <pt>Velocidade</pt>
+    <en>Speed</en>
+    <it>Velocità</it>
+    <es>Velocidad</es>
+    <fr>Vitesse</fr>
+  </key>
+  <key name="speed_fast">
+    <pt>Rápido</pt>
+    <en>Fast</en>
+    <it>Veloce</it>
+    <es>Rápido</es>
+    <fr>Rapide</fr>
+  </key>
+  <key name="speed_realistic">
+    <pt>Realista</pt>
+    <en>Realistic</en>
+    <it>Realistico</it>
+    <es>Realista</es>
+    <fr>Réaliste</fr>
+  </key>
+  <key name="favorites_title">
+    <pt>Minhas Seleções Favoritas</pt>
+    <en>My Favorite Teams</en>
+    <it>Le Mie Squadre Preferite</it>
+    <es>Mis Selecciones Favoritas</es>
+    <fr>Mes Équipes Favorites</fr>
+  </key>
+  <key name="no_favorites">
+    <pt>Nenhuma seleção favoritada. Toque na estrela no relógio!</pt>
+    <en>No favorite teams. Tap the star on the watch!</en>
+    <it>Nessuna squadra preferita. Tocca la stella sul orologio!</it>
+    <es>Ninguna selección favorita. ¡Toca la estrella en el reloj!</es>
+    <fr>Aucune équipe favorite. Appuyez sur l'étoile sur la montre!</fr>
+  </key>
+  <key name="api_sync_title">
+    <pt>Sincronização API</pt>
+    <en>API Synchronization</en>
+    <it>Sincronizzazione API</it>
+    <es>Sincronización API</es>
+    <fr>Sincronisation API</fr>
+  </key>
+  <key name="api_fetching">
+    <pt>Buscando dados da API...</pt>
+    <en>Fetching API data...</en>
+    <it>Ricerca dati API...</it>
+    <es>Buscando datos de the API...</es>
+    <fr>Récupération des données API...</fr>
+  </key>
+  <key name="api_sync_error">
+    <pt>Erro. Usando cache local.</pt>
+    <en>Error. Using local cache.</en>
+    <it>Errore. Uso cache locale.</it>
+    <es>Error. Usando caché local.</es>
+    <fr>Erreur. Utilisation du cache local.</fr>
+  </key>
+  <key name="api_syncing">
+    <pt>Sincronizando dados...</pt>
+    <en>Syncing data...</en>
+    <it>Sincronizzazione dati...</it>
+    <es>Sincronizando datos...</es>
+    <fr>Sincronisation des données...</fr>
+  </key>
+  
+  <!-- Continentes / Filtros -->
+  <key name="filter_all">
+    <pt>Todos</pt>
+    <en>All</en>
+    <it>Tutti</it>
+    <es>Todos</es>
+    <fr>Tous</fr>
+  </key>
+  
+  <!-- Traduções de Países / Teams -->
+  <key name="Algeria">
+    <pt>Argélia</pt>
+    <en>Algeria</en>
+    <it>Algeria</it>
+    <es>Argelia</es>
+    <fr>Algérie</fr>
+  </key>
+  <key name="Argentina">
+    <pt>Argentina</pt>
+    <en>Argentina</en>
+    <it>Argentina</it>
+    <es>Argentina</es>
+    <fr>Argentine</fr>
+  </key>
+  <key name="Australia">
+    <pt>Austrália</pt>
+    <en>Australia</en>
+    <it>Australia</it>
+    <es>Australia</es>
+    <fr>Australie</fr>
+  </key>
+  <key name="Austria">
+    <pt>Ástria</pt>
+    <en>Austria</en>
+    <it>Austria</it>
+    <es>Austria</es>
+    <fr>Autriche</fr>
+  </key>
+  <key name="Belgium">
+    <pt>Bélgica</pt>
+    <en>Belgium</en>
+    <it>Belgio</it>
+    <es>Bélgica</es>
+    <fr>Belgique</fr>
+  </key>
+  <key name="Bosnia and Herzegovina">
+    <pt>Bósnia e Herz.</pt>
+    <en>Bosnia and Herzegovina</en>
+    <it>Bosnia-Erzegovina</it>
+    <es>Bosnia y Herzegovina</es>
+    <fr>Bosnie-Herzégovine</fr>
+  </key>
+  <key name="Brazil">
+    <pt>Brasil</pt>
+    <en>Brazil</en>
+    <it>Brasile</it>
+    <es>Brasil</es>
+    <fr>Brésil</fr>
+  </key>
+  <key name="Canada">
+    <pt>Canadá</pt>
+    <en>Canada</en>
+    <it>Canada</it>
+    <es>Canadá</es>
+    <fr>Canada</fr>
+  </key>
+  <key name="Cape Verde">
+    <pt>Cabo Verde</pt>
+    <en>Cape Verde</en>
+    <it>Capo Verde</it>
+    <es>Cabo Verde</es>
+    <fr>Cap-Vert</fr>
+  </key>
+  <key name="Colombia">
+    <pt>Colômbia</pt>
+    <en>Colombia</en>
+    <it>Colombia</it>
+    <es>Colombia</es>
+    <fr>Colombie</fr>
+  </key>
+  <key name="Croatia">
+    <pt>Croácia</pt>
+    <en>Croatia</en>
+    <it>Croazia</it>
+    <es>Croacia</es>
+    <fr>Croatie</fr>
+  </key>
+  <key name="Curaçao">
+    <pt>Curaçao</pt>
+    <en>Curaçao</en>
+    <it>Curaçao</it>
+    <es>Curaçao</es>
+    <fr>Curaçao</fr>
+  </key>
+  <key name="Czech Republic">
+    <pt>Rep. Tcheca</pt>
+    <en>Czech Republic</en>
+    <it>Repubblica Ceca</it>
+    <es>República Checa</es>
+    <fr>République Tchèque</fr>
+  </key>
+  <key name="DR Congo">
+    <pt>RD Congo</pt>
+    <en>DR Congo</en>
+    <it>Rep. Dem. Congo</it>
+    <es>RD Congo</es>
+    <fr>RD Congo</fr>
+  </key>
+  <key name="Ecuador">
+    <pt>Equador</pt>
+    <en>Ecuador</en>
+    <it>Ecuador</it>
+    <es>Ecuador</es>
+    <fr>Équateur</fr>
+  </key>
+  <key name="Egypt">
+    <pt>Egito</pt>
+    <en>Egypt</en>
+    <it>Egitto</it>
+    <es>Egipto</es>
+    <fr>Égypte</fr>
+  </key>
+  <key name="England">
+    <pt>Inglaterra</pt>
+    <en>England</en>
+    <it>Inghilterra</it>
+    <es>Inglaterra</es>
+    <fr>Angleterre</fr>
+  </key>
+  <key name="France">
+    <pt>França</pt>
+    <en>France</en>
+    <it>Francia</it>
+    <es>Francia</es>
+    <fr>France</fr>
+  </key>
+  <key name="Germany">
+    <pt>Alemanha</pt>
+    <en>Germany</en>
+    <it>Germania</it>
+    <es>Alemania</es>
+    <fr>Allemagne</fr>
+  </key>
+  <key name="Ghana">
+    <pt>Gana</pt>
+    <en>Ghana</en>
+    <it>Ghana</it>
+    <es>Ghana</es>
+    <fr>Ghana</fr>
+  </key>
+  <key name="Haiti">
+    <pt>Haiti</pt>
+    <en>Haiti</en>
+    <it>Haiti</it>
+    <es>Haití</es>
+    <fr>Haïti</fr>
+  </key>
+  <key name="Iran">
+    <pt>Irã</pt>
+    <en>Iran</en>
+    <it>Iran</it>
+    <es>Irán</es>
+    <fr>Iran</fr>
+  </key>
+  <key name="Iraq">
+    <pt>Iraque</pt>
+    <en>Iraq</en>
+    <it>Iraq</it>
+    <es>Irak</es>
+    <fr>Irak</fr>
+  </key>
+  <key name="Ivory Coast">
+    <pt>Costa do Marfim</pt>
+    <en>Ivory Coast</en>
+    <it>Costa d'Avorio</it>
+    <es>Costa de Marfil</es>
+    <fr>Côte d'Ivoire</fr>
+  </key>
+  <key name="Japan">
+    <pt>Japão</pt>
+    <en>Japan</en>
+    <it>Giappone</it>
+    <es>Japón</es>
+    <fr>Japon</fr>
+  </key>
+  <key name="Jordan">
+    <pt>Jordânia</pt>
+    <en>Jordan</en>
+    <it>Giordania</it>
+    <es>Jordania</es>
+    <fr>Jordanie</fr>
+  </key>
+  <key name="Mexico">
+    <pt>México</pt>
+    <en>Mexico</en>
+    <it>Messico</it>
+    <es>México</es>
+    <fr>Mexique</fr>
+  </key>
+  <key name="Morocco">
+    <pt>Marrocos</pt>
+    <en>Morocco</en>
+    <it>Marocco</it>
+    <es>Marruecos</es>
+    <fr>Maroc</fr>
+  </key>
+  <key name="Netherlands">
+    <pt>Holanda</pt>
+    <en>Netherlands</en>
+    <it>Paesi Bassi</it>
+    <es>Países Bajos</es>
+    <fr>Pays-Bas</fr>
+  </key>
+  <key name="New Zealand">
+    <pt>Nova Zelândia</pt>
+    <en>New Zealand</en>
+    <it>Nuova Zelanda</it>
+    <es>Nueva Zelanda</es>
+    <fr>Nouvelle-Zélande</fr>
+  </key>
+  <key name="Norway">
+    <pt>Noruega</pt>
+    <en>Norway</en>
+    <it>Norvegia</it>
+    <es>Noruega</es>
+    <fr>Norvège</fr>
+  </key>
+  <key name="Panama">
+    <pt>Panamá</pt>
+    <en>Panama</en>
+    <it>Panama</it>
+    <es>Panamá</es>
+    <fr>Panama</fr>
+  </key>
+  <key name="Paraguay">
+    <pt>Paraguai</pt>
+    <en>Paraguay</en>
+    <it>Paraguay</it>
+    <es>Paraguay</es>
+    <fr>Paraguay</fr>
+  </key>
+  <key name="Portugal">
+    <pt>Portugal</pt>
+    <en>Portugal</en>
+    <it>Portogallo</it>
+    <es>Portugal</es>
+    <fr>Portugal</fr>
+  </key>
+  <key name="Qatar">
+    <pt>Catar</pt>
+    <en>Qatar</en>
+    <it>Qatar</it>
+    <es>Catar</es>
+    <fr>Qatar</fr>
+  </key>
+  <key name="Saudi Arabia">
+    <pt>Arábia Saudita</pt>
+    <en>Saudi Arabia</en>
+    <it>Arabia Saudita</it>
+    <es>Arabia Saudita</es>
+    <fr>Arabie Saoudite</fr>
+  </key>
+  <key name="Scotland">
+    <pt>Escócia</pt>
+    <en>Scotland</en>
+    <it>Scozia</it>
+    <es>Escocia</es>
+    <fr>Écosse</fr>
+  </key>
+  <key name="Senegal">
+    <pt>Senegal</pt>
+    <en>Senegal</en>
+    <it>Senegal</it>
+    <es>Senegal</es>
+    <fr>Sénégal</fr>
+  </key>
+  <key name="South Africa">
+    <pt>África do Sul</pt>
+    <en>South Africa</en>
+    <it>Sudafrica</it>
+    <es>Sudáfrica</es>
+    <fr>Afrique du Sud</fr>
+  </key>
+  <key name="South Korea">
+    <pt>Coreia do Sul</pt>
+    <en>South Korea</en>
+    <it>Corea del Sud</it>
+    <es>Corea del Sur</es>
+    <fr>Corée du Sud</fr>
+  </key>
+  <key name="Spain">
+    <pt>Espanha</pt>
+    <en>Spain</en>
+    <it>Spagna</it>
+    <es>España</es>
+    <fr>Espagne</fr>
+  </key>
+  <key name="Sweden">
+    <pt>Suécia</pt>
+    <en>Sweden</en>
+    <it>Svezia</it>
+    <es>Suecia</es>
+    <fr>Suède</fr>
+  </key>
+  <key name="Switzerland">
+    <pt>Suíça</pt>
+    <en>Switzerland</en>
+    <it>Svizzera</it>
+    <es>Suiza</es>
+    <fr>Suisse</fr>
+  </key>
+  <key name="Tunisia">
+    <pt>Tunísia</pt>
+    <en>Tunisia</en>
+    <it>Tunisia</it>
+    <es>Túnez</es>
+    <fr>Tunisie</fr>
+  </key>
+  <key name="Turkey">
+    <pt>Turquia</pt>
+    <en>Turkey</en>
+    <it>Turchia</it>
+    <es>Turquía</es>
+    <fr>Turquie</fr>
+  </key>
+  <key name="Uruguay">
+    <pt>Uruguai</pt>
+    <en>Uruguay</en>
+    <it>Uruguay</it>
+    <es>Uruguay</es>
+    <fr>Uruguay</fr>
+  </key>
+  <key name="USA">
+    <pt>EUA</pt>
+    <en>USA</en>
+    <it>USA</it>
+    <es>EE.UU.</es>
+    <fr>États-Unis</fr>
+  </key>
+  <key name="Uzbekistan">
+    <pt>Uzbequistão</pt>
+    <en>Uzbekistan</en>
+    <it>Uzbekistan</it>
+    <es>Uzbekistán</es>
+    <fr>Ouzbékistan</fr>
+  </key>
+</translations>

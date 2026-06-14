@@ -40,17 +40,17 @@
             
             <!-- TELA 1: PAÍSES -->
             <div class="watch-page" id="page-countries">
-              <h2 class="watch-page-title">Países</h2>
+              <h2 class="watch-page-title" data-translate="countries_title">Países</h2>
               
               <!-- Busca -->
               <div class="search-wrapper">
                 <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" id="country-search" placeholder="Buscar país...">
+                <input type="text" class="search-input" id="country-search" placeholder="Buscar país..." data-translate-placeholder="search_placeholder">
               </div>
               
               <!-- Filtros de Continentes -->
               <div class="filters-container" id="country-filters">
-                <button class="filter-pill active" data-filter="Todos">Todos</button>
+                <button class="filter-pill active" data-filter="Todos" data-translate="filter_all">Todos</button>
                 <button class="filter-pill" data-filter="Sul-Am.">Sul-Am.</button>
                 <button class="filter-pill" data-filter="Europa">Europa</button>
                 <button class="filter-pill" data-filter="Caribe/C">Caribe/C</button>
@@ -67,11 +67,11 @@
             
             <!-- TELA 2: GRUPOS -->
             <div class="watch-page" id="page-groups">
-              <h2 class="watch-page-title">Grupos</h2>
+              <h2 class="watch-page-title" data-translate="groups_title">Grupos</h2>
               
               <!-- Filtros de Grupos -->
               <div class="filters-container" id="group-filters">
-                <button class="filter-pill active" data-filter="Todos">Todos</button>
+                <button class="filter-pill active" data-filter="Todos" data-translate="filter_all">Todos</button>
                 <button class="filter-pill" data-filter="A">Grupo A</button>
                 <button class="filter-pill" data-filter="B">Grupo B</button>
                 <button class="filter-pill" data-filter="C">Grupo C</button>
@@ -94,7 +94,7 @@
             
             <!-- TELA 3: JOGOS DO DIA -->
             <div class="watch-page" id="page-matches">
-              <h2 class="watch-page-title">Jogos do Dia</h2>
+              <h2 class="watch-page-title" data-translate="matches_title">Jogos do Dia</h2>
               
               <div class="scrollable-content" id="matches-list">
                 <!-- Injetado via JS -->
@@ -125,7 +125,7 @@
               </div>
               
               <!-- Título Eventos -->
-              <h3 class="events-section-title">Eventos</h3>
+              <h3 class="events-section-title" data-translate="events_title">Eventos</h3>
               
               <!-- Linha do tempo dos Eventos -->
               <div class="timeline-container" id="match-timeline">
@@ -145,33 +145,33 @@
          ========================================================================== -->
     <div class="control-panel">
       <div class="control-header">
-        <h1 class="control-title">Copa do Mundo 2026</h1>
-        <p class="control-subtitle">Painel de Controle e Simulação Live</p>
+        <h1 class="control-title" data-translate="control_title">Copa do Mundo 2026</h1>
+        <p class="control-subtitle" data-translate="control_subtitle">Painel de Controle e Simulação Live</p>
       </div>
       
       <!-- Seção: Simulação da Rodada -->
       <div class="control-section">
-        <h2 class="section-title">Controle do Dia do Jogo</h2>
+        <h2 class="section-title" data-translate="control_matchday">Controle do Dia do Jogo</h2>
         <div class="simulator-status-card">
           <div class="status-row">
-            <span class="status-label">Simulado (Data):</span>
+            <span class="status-label" data-translate="sim_date">Simulado (Data):</span>
             <span class="status-val" id="sim-date">14/06/2026</span>
           </div>
           <div class="status-row">
-            <span class="status-label">Status da Simulação:</span>
+            <span class="status-label" data-translate="sim_status">Status da Simulação:</span>
             <span class="status-val" id="sim-status">Pausado</span>
           </div>
           <div class="status-row">
-            <span class="status-label">Minuto do Jogo:</span>
+            <span class="status-label" data-translate="sim_minute">Minuto do Jogo:</span>
             <span class="status-val" id="sim-minute">0'</span>
           </div>
         </div>
         
         <div class="btn-group">
-          <button class="btn btn-primary" id="btn-start-sim">
+          <button class="btn btn-primary" id="btn-start-sim" data-translate="start_sim">
             <span>▶</span> Iniciar Simulação
           </button>
-          <button class="btn btn-danger" id="btn-reset-sim">
+          <button class="btn btn-danger" id="btn-reset-sim" data-translate="reset_day">
             <span>🔄</span> Reiniciar Dia
           </button>
         </div>
@@ -179,31 +179,31 @@
       
       <!-- Seção: Velocidade da Simulação -->
       <div class="control-section">
-        <h2 class="section-title">Velocidade</h2>
+        <h2 class="section-title" data-translate="speed">Velocidade</h2>
         <div class="speed-control">
           <input type="range" class="speed-slider" id="sim-speed" min="100" max="2000" step="100" value="500">
           <div class="speed-labels">
-            <span>Rápido (100ms)</span>
+            <span data-translate="speed_fast">Rápido (100ms)</span>
             <span id="speed-indicator">500ms / min</span>
-            <span>Realista (2s)</span>
+            <span data-translate="speed_realistic">Realista (2s)</span>
           </div>
         </div>
       </div>
       
       <!-- Seção: Favoritos -->
       <div class="control-section">
-        <h2 class="section-title">Minhas Seleções Favoritas</h2>
+        <h2 class="section-title" data-translate="favorites_title">Minhas Seleções Favoritas</h2>
         <div class="favorites-list" id="fav-list-container">
-          <span class="fav-tag-empty">Nenhuma seleção favoritada. Toque na estrela no relógio!</span>
+          <span class="fav-tag-empty" data-translate="no_favorites">Nenhuma seleção favoritada. Toque na estrela no relógio!</span>
         </div>
       </div>
       
       <!-- Seção: API e Conectividade -->
       <div class="control-section">
-        <h2 class="section-title">Sincronização API</h2>
+        <h2 class="section-title" data-translate="api_sync_title">Sincronização API</h2>
         <div class="api-badge">
           <div class="api-dot" id="api-status-dot"></div>
-          <span id="api-status-text">Buscando dados da API...</span>
+          <span id="api-status-text" data-translate="api_fetching">Buscando dados da API...</span>
         </div>
         <button class="btn" id="btn-force-sync" style="margin-top: 4px;">
           Force Sync (Re-fetch API)
