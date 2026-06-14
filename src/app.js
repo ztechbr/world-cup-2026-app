@@ -207,17 +207,10 @@ function initSimulator() {
 // INTERNACIONALIZAÇÃO (XML PARSER & HELPER)
 // ==========================================================================
 
-// Detecta o idioma a partir da URL (?language=) ou do navegador do usuário
+// Detecta o idioma a partir da URL (?language=)
 function detectLanguage() {
   const urlParams = new URLSearchParams(window.location.search);
   let lang = urlParams.get('language') || urlParams.get('lang');
-  
-  if (!lang) {
-    const browserLang = navigator.language || navigator.userLanguage;
-    if (browserLang) {
-      lang = browserLang.split('-')[0];
-    }
-  }
   
   if (lang) {
     lang = lang.toLowerCase();
@@ -228,7 +221,7 @@ function detectLanguage() {
     }
   }
   
-  activeLang = 'pt'; // padrão caso indisponível
+  activeLang = 'en'; // Padrão adotado na ausência ou se inválido
 }
 
 // Faz o fetch e parse do dicionário XML translate.xml
