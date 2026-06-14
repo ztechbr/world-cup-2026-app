@@ -88,6 +88,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Renderiza Views Iniciais
   renderAll();
 
+  // Comportamento inicial específico para o Modo Embed
+  if (isEmbed) {
+    // Inicia na aba Jogos do Dia (Aba 2 do carrossel)
+    navigateToPage(2);
+    
+    // Abre automaticamente os detalhes se houver alguma partida ocorrendo no momento (live)
+    const liveMatch = matchesState.find(m => m.status === 'live');
+    if (liveMatch) {
+      openMatchDetail(liveMatch.id);
+    }
+  }
+
   // Se estiver no modo embed, ativa o pull da API minuto a minuto (60s)
   if (isEmbed) {
     setInterval(async () => {
@@ -100,7 +112,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       if (selectedMatchId) {
         const match = matchesState.find(m => m.id === selectedMatchId);
-        if (match) renderMatchDetail(match);
+        if (match) {
+          renderMatchDetail(match);
+        } else {
+          closeMatchDetail();
+        }
+      } else {
+        // Se nenhuma partida estava aberta, mas agora começou um jogo ao vivo, abre automaticamente!
+        const liveMatch = matchesState.find(m => m.status === 'live');
+        if (liveMatch) {
+          openMatchDetail(liveMatch.id);
+        }
       }
     }, 60000);
   }
