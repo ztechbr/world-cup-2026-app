@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Tags -->
+  <title>Smartwatch Copa do Mundo 2026 - Simulador de Jogos</title>
+  <meta name="description" content="Consulte os jogos, grupos e classificações da Copa do Mundo de 2026 através de um simulador interativo de relógio inteligente em tempo real.">
+  <meta name="theme-color" content="#09090b">
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+
+  <div class="app-container" id="app">
+    
+    <!-- ==========================================================================
+         SIMULADOR DO SMARTWATCH (ESQUERDA)
+         ========================================================================== -->
+    <div class="watch-wrapper">
+      <!-- Pulseiras Físicas -->
+      <div class="watch-strap-top"></div>
+      
+      <!-- Caixa do Relógio -->
+      <div class="watch-case">
+        <!-- Botão Coroa Ativo -->
+        <div class="watch-crown" id="watch-crown-btn" title="Girar/Voltar tela"></div>
+        
+        <!-- Tela Circular -->
+        <div class="watch-screen" id="watch-screen">
+          <div class="watch-glare"></div>
+          
+          <!-- Horário Geral no Topo -->
+          <div class="watch-header-time" id="watch-clock">14:18</div>
+          
+          <!-- Viewport do Carrossel de Telas -->
+          <div class="carousel-viewport" id="carousel-viewport">
+            
+            <!-- TELA 1: PAÍSES -->
+            <div class="watch-page" id="page-countries">
+              <h2 class="watch-page-title">Países</h2>
+              
+              <!-- Busca -->
+              <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="country-search" placeholder="Buscar país...">
+              </div>
+              
+              <!-- Filtros de Continentes -->
+              <div class="filters-container" id="country-filters">
+                <button class="filter-pill active" data-filter="Todos">Todos</button>
+                <button class="filter-pill" data-filter="Sul-Am.">Sul-Am.</button>
+                <button class="filter-pill" data-filter="Europa">Europa</button>
+                <button class="filter-pill" data-filter="Caribe/C">Caribe/C</button>
+                <button class="filter-pill" data-filter="África">África</button>
+                <button class="filter-pill" data-filter="Ásia">Ásia</button>
+                <button class="filter-pill" data-filter="Oceania">Oceania</button>
+              </div>
+              
+              <!-- Lista de Países -->
+              <div class="scrollable-content" id="countries-list">
+                <!-- Injetado via JS -->
+              </div>
+            </div>
+            
+            <!-- TELA 2: GRUPOS -->
+            <div class="watch-page" id="page-groups">
+              <h2 class="watch-page-title">Grupos</h2>
+              
+              <!-- Filtros de Grupos -->
+              <div class="filters-container" id="group-filters">
+                <button class="filter-pill active" data-filter="Todos">Todos</button>
+                <button class="filter-pill" data-filter="A">Grupo A</button>
+                <button class="filter-pill" data-filter="B">Grupo B</button>
+                <button class="filter-pill" data-filter="C">Grupo C</button>
+                <button class="filter-pill" data-filter="D">Grupo D</button>
+                <button class="filter-pill" data-filter="E">Grupo E</button>
+                <button class="filter-pill" data-filter="F">Grupo F</button>
+                <button class="filter-pill" data-filter="G">Grupo G</button>
+                <button class="filter-pill" data-filter="H">Grupo H</button>
+                <button class="filter-pill" data-filter="I">Grupo I</button>
+                <button class="filter-pill" data-filter="J">Grupo J</button>
+                <button class="filter-pill" data-filter="K">Grupo K</button>
+                <button class="filter-pill" data-filter="L">Grupo L</button>
+              </div>
+              
+              <!-- Tabelas de Classificação -->
+              <div class="scrollable-content" id="groups-list">
+                <!-- Injetado via JS -->
+              </div>
+            </div>
+            
+            <!-- TELA 3: JOGOS DO DIA -->
+            <div class="watch-page" id="page-matches">
+              <h2 class="watch-page-title">Jogos do Dia</h2>
+              
+              <div class="scrollable-content" id="matches-list">
+                <!-- Injetado via JS -->
+              </div>
+            </div>
+            
+          </div> <!-- Fim Carousel Viewport -->
+          
+          <!-- Indicadores de Página (Dots) -->
+          <div class="page-indicators">
+            <div class="indicator-dot active" data-page="0"></div>
+            <div class="indicator-dot" data-page="1"></div>
+            <div class="indicator-dot" data-page="2"></div>
+          </div>
+          
+          <!-- TELA 4: DETALHES DO JOGO (SLIDE OVER) -->
+          <div class="detail-view" id="match-detail-view">
+            <div class="detail-header">
+              <button class="back-btn" id="detail-back-btn">←</button>
+              <div class="detail-time" id="detail-header-clock">14:20</div>
+              <div style="width: 20px;"></div> <!-- Espaçador para centralizar título -->
+            </div>
+            
+            <div class="scrollable-content" style="padding-bottom: 20px;">
+              <!-- Card de Placar e Estádio -->
+              <div class="detail-score-card" id="detail-score-card">
+                <!-- Injetado via JS -->
+              </div>
+              
+              <!-- Título Eventos -->
+              <h3 class="events-section-title">Eventos</h3>
+              
+              <!-- Linha do tempo dos Eventos -->
+              <div class="timeline-container" id="match-timeline">
+                <!-- Injetado via JS -->
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="watch-strap-bottom"></div>
+    </div>
+    
+    <!-- ==========================================================================
+         PAINEL DE CONTROLE EXTERNO (DIREITA)
+         ========================================================================== -->
+    <div class="control-panel">
+      <div class="control-header">
+        <h1 class="control-title">Copa do Mundo 2026</h1>
+        <p class="control-subtitle">Painel de Controle e Simulação Live</p>
+      </div>
+      
+      <!-- Seção: Simulação da Rodada -->
+      <div class="control-section">
+        <h2 class="section-title">Controle do Dia do Jogo</h2>
+        <div class="simulator-status-card">
+          <div class="status-row">
+            <span class="status-label">Simulado (Data):</span>
+            <span class="status-val" id="sim-date">14/06/2026</span>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Status da Simulação:</span>
+            <span class="status-val" id="sim-status">Pausado</span>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Minuto do Jogo:</span>
+            <span class="status-val" id="sim-minute">0'</span>
+          </div>
+        </div>
+        
+        <div class="btn-group">
+          <button class="btn btn-primary" id="btn-start-sim">
+            <span>▶</span> Iniciar Simulação
+          </button>
+          <button class="btn btn-danger" id="btn-reset-sim">
+            <span>🔄</span> Reiniciar Dia
+          </button>
+        </div>
+      </div>
+      
+      <!-- Seção: Velocidade da Simulação -->
+      <div class="control-section">
+        <h2 class="section-title">Velocidade</h2>
+        <div class="speed-control">
+          <input type="range" class="speed-slider" id="sim-speed" min="100" max="2000" step="100" value="500">
+          <div class="speed-labels">
+            <span>Rápido (100ms)</span>
+            <span id="speed-indicator">500ms / min</span>
+            <span>Realista (2s)</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Seção: Favoritos -->
+      <div class="control-section">
+        <h2 class="section-title">Minhas Seleções Favoritas</h2>
+        <div class="favorites-list" id="fav-list-container">
+          <span class="fav-tag-empty">Nenhuma seleção favoritada. Toque na estrela no relógio!</span>
+        </div>
+      </div>
+      
+      <!-- Seção: API e Conectividade -->
+      <div class="control-section">
+        <h2 class="section-title">Sincronização API</h2>
+        <div class="api-badge">
+          <div class="api-dot" id="api-status-dot"></div>
+          <span id="api-status-text">Buscando dados da API...</span>
+        </div>
+        <button class="btn" id="btn-force-sync" style="margin-top: 4px;">
+          Force Sync (Re-fetch API)
+        </button>
+      </div>
+    </div>
+    
+  </div>
+
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>

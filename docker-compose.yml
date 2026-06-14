@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  worldcup-simulator:
+    container_name: worldcup_2026_simulator
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
