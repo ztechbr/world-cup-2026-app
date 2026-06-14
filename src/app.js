@@ -68,6 +68,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   initSwipeGestures();
   loadFavorites();
   
+  // Verifica se está rodando no modo embed (esconde controle lateral e atualiza via API)
+  const urlParams = new URLSearchParams(window.location.search);
+  const isEmbed = urlParams.get('embed') === 'true' || urlParams.get('watch-only') === 'true';
+  
+  if (isEmbed) {
+    document.body.classList.add('embed-mode');
+  }
+  
   // Carrega jogos
   await syncData(false);
   
@@ -79,6 +87,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // Renderiza Views Iniciais
   renderAll();
+
+  // Se estiver no modo embed, ativa o pull da API minuto a minuto (60s)
+  if (isEmbed) {
+    setInterval(async () => {
+      console.log('Modo Embed: Atualizando dados a partir da API...');
+      // Busca dados limpos da API e atualiza o estado
+      await syncData(true);
+      
+      // Re-renderiza as telas ativas
+      renderAll();
+      
+      if (selectedMatchId) {
+        const match = matchesState.find(m => m.id === selectedMatchId);
+        if (match) renderMatchDetail(match);
+      }
+    }, 60000);
+  }
 });
 
 // Atualiza o relógio do smartwatch em tempo real

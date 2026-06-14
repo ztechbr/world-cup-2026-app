@@ -1127,3 +1127,31 @@ body {
 .filters-container {
   -webkit-overflow-scrolling: touch;
 }
+
+/* ==========================================================================
+   MODO EMBED (IFRAME/MODAL)
+   ========================================================================== */
+body.embed-mode {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body.embed-mode .app-container {
+  gap: 0 !important;
+  justify-content: center;
+  padding: 0 !important;
+}
+
+body.embed-mode .control-panel {
+  display: none !important;
+}
+
+body.embed-mode .watch-wrapper {
+  margin: 0 auto;
+}
+
